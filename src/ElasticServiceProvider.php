@@ -3,7 +3,6 @@
 namespace BrandStudio\Elasticsearch;
 
 use Illuminate\Support\ServiceProvider;
-use BrandStudio\Elasticsearch\ElasticClient;
 use BrandStudio\Elasticsearch\Console\Commands\ElasticConfiguratorCommand;
 
 class ElasticServiceProvider extends ServiceProvider
