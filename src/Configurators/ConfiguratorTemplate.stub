@@ -1,0 +1,25 @@
+<?php
+
+namespace App\Configurators;
+
+use BrandStudio\Elasticsearch\Configurators\Configurator;
+
+class {{ $class_name }} extends Configurator
+{
+
+    const INDEX_NAME = '{{ $index_name }}';
+
+    const SETTINGS = [
+        'number_of_shards' => 1,
+        'number_of_replicas' => 0,
+    ];
+
+    const MAPPINGS = [
+        '{{ $type_name }}' => [
+            'properties' => [
+
+            ],
+        ],
+    ];
+
+}

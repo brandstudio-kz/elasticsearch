@@ -1,0 +1,48 @@
+{
+    "name": "brandstudio/elasticsearch",
+    "description": "BrandStudio Laravel Elasticsearch package",
+    "keywords": [
+        "Php",
+        "Laravel",
+        "Elasticsearch",
+        "Laravel Elasticsearch"
+    ],
+    "license": "MIT",
+    "homepage": "https://github.com/brandstudio-kz/recaptcha",
+    "authors": [
+        {
+            "name": "Nurdaulet",
+            "email": "nurik9293709@gmail.com",
+            "homepage": "https://sarsenovz2z.github.io/",
+            "role": "Developer"
+        },
+        {
+            "name": "Nurlan",
+            "email": "nurlan.bboy@gmail.com",
+            "homepage": "https://nurlanrazak.github.io",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "elasticsearch/elasticsearch": "^7.2",
+        "laravel/framework": "^5.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "BrandStudio\\Elasticsearch\\": "src"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "config": {
+        "sort-packages": true,
+        "preferred-install": "dist"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BrandStudio\\Elasticsearch\\ElasticServiceProvider"
+            ]
+        }
+    }
+}
