@@ -6,7 +6,7 @@ class Builder
 {
 
     protected $client;
-    protected $index_name;
+    protected $model;
 
     protected $query_string = [];
     protected $must = [];
@@ -14,9 +14,9 @@ class Builder
     protected $should = [];
     protected $filter = [];
 
-    public function __construct(string $index_name, string $q = null)
+    public function __construct(string $model, string $q = null)
     {
-        $this->index_name = $index_name;
+        $this->model = $model;
         $this->client = resolve(ElasticClient::class);
 
         if (is_string($q)) {
@@ -28,6 +28,11 @@ class Builder
     {
         $params = $this->getQuery();
         $response = $this->client->search($params);
+        return array_map(
+            function($item) {
+                return new $this->model($item['_source'] ?? []);
+            }, $response['hits']['hits']
+        );
         dd($response);
     }
 
@@ -60,7 +65,7 @@ class Builder
     protected function getQuery() : array
     {
         return [
-            'index' => $this->index_name,
+            'index' => $this->model::getIndexName(),
             // 'body' => [
             //     'query' => [
             //         'query_string' => $this->query_string,

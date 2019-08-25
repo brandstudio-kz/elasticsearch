@@ -15,7 +15,7 @@ class ElasticModel extends Model
 
     public static function search(string $q = null) : Builder
     {
-        return new Builder(static::getIndexName(), $q);
+        return new Builder(static::class, $q);
     }
 
     public static function getIndexName() : string
