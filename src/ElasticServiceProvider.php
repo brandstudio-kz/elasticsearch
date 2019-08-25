@@ -3,7 +3,7 @@
 namespace BrandStudio\Elasticsearch;
 
 use Illuminate\Support\ServiceProvider;
-use BrandStudio\Elasticsearch\Console\Commands\ElasticConfiguratorCommand;
+use BrandStudio\Elasticsearch\Console\Commands\ElasticIndexCommand;
 
 class ElasticServiceProvider extends ServiceProvider
 {
@@ -31,7 +31,7 @@ class ElasticServiceProvider extends ServiceProvider
     private function registerCommands()
     {
         $this->commands([
-            ElasticConfiguratorCommand::class,
+            ElasticIndexCommand::class,
         ]);
     }
 

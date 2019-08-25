@@ -4,7 +4,7 @@ namespace BrandStudio\Elasticsearch\Console\Commands;
 
 use Illuminate\Console\Command;
 
-class ElasticConfiguratorCommand extends Command
+class ElasticIndexCommand extends Command
 {
 
         /**
@@ -12,14 +12,14 @@ class ElasticConfiguratorCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'brandstudio:elastic {operation} {name}';
+    protected $signature = 'brandstudio:elastic {operation} {model}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Elasticsearch Index configurator file [create, drop, migrate]';
+    protected $description = 'Elasticsearch [create, drop, migrate] index';
 
     /**
      * Create a new command instance.
@@ -39,15 +39,18 @@ class ElasticConfiguratorCommand extends Command
     public function handle()
     {
         $operation_name = $this->argument('operation');
-        $name = $this->argument('name');
+        $model = "App\\".$this->argument('model');
 
-        $operation = ucfirst($this->argument('operation'));
-        $class = "BrandStudio\\Elasticsearch\\Console\\Operations\\{$operation}Configurator";
+        $operation = ucfirst($operation_name);
+        $class = "BrandStudio\\Elasticsearch\\Console\\Operations\\{$operation}Index";
 
         if (!class_exists($class)) {
-            throw new \Exception("Invalid '{$operation}' operation! Supported operations: ['create', 'migrate']");
+            throw new \Exception("Invalid '{$operation_name}' operation! Supported operations: ['create', 'drop', 'migrate']");
         }
-        $class::execute($name);
+        if (!class_exists($model)) {
+            throw new \Exception("{$model} not found!");
+        }
+        $class::execute($model);
     }
 
 }

@@ -4,12 +4,12 @@ namespace BrandStudio\Elasticsearch\Console\Operations;
 
 use BrandStudio\Elasticsearch\ElasticClient;
 
-class DropConfigurator extends Base
+class DropIndex extends Base
 {
 
-    public static function execute(string $name)
+    public static function execute(string $model)
     {
-        $index_name = self::getIndexName($name);
+        $index_name = $model::getIndexName();
 
         $client = resolve(ElasticClient::class);
         $client->dropIndex($index_name);
