@@ -15,10 +15,15 @@ class Base
         return ucfirst($name)."Configurator";
     }
 
+    protected static function getConfiguratorsDir() : string
+    {
+        return base_path("app/Configurators");
+    }
+
     protected static function getConfiguratorPath(string $name) : string
     {
         $class_name = self::getConfiguratorClassName($name);
-        return base_path("app/Configurators/{$class_name}.php");
+        return self::getConfiguratorsDir()."/{$class_name}.php";
     }
 
     protected static function getConfiguratorClass(string $name) : string

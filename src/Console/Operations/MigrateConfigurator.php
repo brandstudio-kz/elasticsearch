@@ -12,13 +12,7 @@ class MigrateConfigurator extends Base
         $configurator = self::getConfiguratorClass($name);
         $index_name = self::getIndexName($name);
 
-        $params = [
-            'index' => $index_name,
-            'body' => [
-                'settings' => $configurator::SETTINGS,
-                'mappings' => $configurator::MAPPINGS,
-            ],
-        ];
+        $params = $configurator::getParams();
 
         $client = resolve(ElasticClient::class);
         $client->createIndex($params);

@@ -15,9 +15,9 @@ class {{ $class_name }} extends Configurator
     ];
 
     const MAPPINGS = [
-        '{{ $type_name }}' => [
-            'properties' => [
-
+        'properties' => [
+            'id' => [
+                'type' => 'long',
             ],
         ],
     ];

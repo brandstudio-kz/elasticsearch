@@ -9,27 +9,31 @@ class CreateConfigurator extends Base
     {
         $index_name = self::getIndexName($name);
         $class_name = self::getConfiguratorClassName($name);
-        $type_name = $name;
-        $path = self::getConfiguratorPath($name);
 
-        self::copyConfigurator($path, self::getTemplate($index_name, $class_name, $type_name));
+        $path = self::getConfiguratorPath($name);
+        $template = self::getTemplate($class_name, $index_name);
+
+        self::copyConfigurator($path, $template);
 
         echo "{$class_name} created successfully!\n";
     }
 
     protected static function copyConfigurator(string $path, string $template)
     {
-        if (file_exists($path)) {
-            throw new \Exception("{$class_name} already exists!");
+        if (!is_dir(self::getConfiguratorsDir())) {
+            mkdir(self::getConfiguratorsDir());
         }
-        file_put_contents($path, self::getTemplate($class_name, $index_name, $type_name));
+        if (file_exists($path)) {
+            throw new \Exception("{$path} already exists!");
+        }
+        file_put_contents($path, $template);
     }
 
-    protected static function getTemplate(string $class_name, string $index_name, string $type_name) : string
+    protected static function getTemplate(string $class_name, string $index_name) : string
     {
         return str_replace(
-            ['{{ $class_name }}', '{{ $index_name }}', '{{ $type_name }}'],
-            [$class_name, $index_name, $type_name],
+            ['{{ $class_name }}', '{{ $index_name }}'],
+            [$class_name, $index_name],
             static::getStub()
         );
     }
