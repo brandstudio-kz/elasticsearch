@@ -30,9 +30,6 @@ class ElasticModel extends Model
 
     public static $mappings = [
         'properties' => [
-            '_all' => [
-                'enabled' => true,
-            ],
             'id' => [
                 'type' => 'long',
             ],
