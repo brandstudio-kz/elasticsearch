@@ -28,7 +28,7 @@ class MigrateIndex extends Base
         $client = resolve(ElasticClient::class);
         $client->index($params);
 
-        echo "Index {$index_name} created successfully\n";
+        echo "Index {$index_name} migrated successfully\n";
     }
 
 }

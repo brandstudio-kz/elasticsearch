@@ -27,6 +27,14 @@ class ElasticClient
         $response = $this->client->indices()->delete($params);
     }
 
+    public function updateDocument(array $params) {
+        return $this->client->update($params);
+    }
+
+    public function dropDocument(array $params) {
+        return $this->client->delete($params);
+    }
+
     public function index(array $params)
     {
         $response = $this->client->bulk($params);

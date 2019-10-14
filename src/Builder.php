@@ -8,7 +8,7 @@ class Builder
     protected $client;
     protected $model;
 
-    protected $query_string = [];
+    protected $query_string;
     protected $must = [];
     protected $must_not = [];
     protected $should = [];
@@ -20,7 +20,7 @@ class Builder
         $this->client = resolve(ElasticClient::class);
 
         if (is_string($q)) {
-            $this->query_string['query'] = $q;
+            $this->query_string = $q;
         }
     }
 
@@ -28,12 +28,12 @@ class Builder
     {
         $params = $this->getQuery();
         $response = $this->client->search($params);
+        // dd($params);
         return array_map(
             function($item) {
                 return new $this->model($item['_source'] ?? []);
             }, $response['hits']['hits']
         );
-        dd($response);
     }
 
     public function paginate()
@@ -66,17 +66,17 @@ class Builder
     {
         return [
             'index' => $this->model::getIndexName(),
-            // 'body' => [
-            //     'query' => [
-            //         'query_string' => $this->query_string,
-            //         'bool' => [
-            //             'must' => $this->must,
-            //             'must_not' => $this->must_not,
-            //             'should' => $this->should,
-            //             'filter' => $this->filter,
-            //         ],
-            //     ],
-            // ],
+            'body' => [
+                'query' => [
+                    'query_string' => [
+                        'query' => $this->query_string,
+                        'fuzziness' => '6',
+                        'fuzzy_max_expansions' => 100,
+                        'fuzzy_prefix_length' => 10,
+                        'minimum_should_match' => '1'
+                    ]
+                ],
+            ],
         ];
     }
 
