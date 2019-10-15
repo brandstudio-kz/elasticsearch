@@ -24,10 +24,7 @@
         }
     ],
     "require": {
-        "elasticsearch/elasticsearch": "^7.2",
-        "illuminate/console": "~5.1|^6.0",
-        "illuminate/database": "5.8.*",
-        "illuminate/support": "5.8.*"
+        "elasticsearch/elasticsearch": "^7.2"
     },
     "autoload": {
         "psr-4": {
