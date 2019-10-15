@@ -28,10 +28,15 @@ class Builder
     {
         $params = $this->getQuery();
         $response = $this->client->search($params);
-        // dd($params);
+
         return array_map(
             function($item) {
-                return new $this->model($item['_source'] ?? []);
+                $model = new $this->model;
+                foreach($item['_source'] ?? [] as $key => $value) {
+                    $model->$key = $value;
+                }
+                // $model->fill($item['_source'] ?? []);
+                return $model;
             }, $response['hits']['hits']
         );
     }
