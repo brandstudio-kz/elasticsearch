@@ -15,23 +15,54 @@ class ElasticModel extends Model
 
         static::deleting(function($item) {
             $client = resolve(ElasticClient::class);
-            $client->dropDocument([
-                'index' => static::getIndexName(),
-                'id' => $item->id,
-            ]);
+            try {
+                $client->dropDocument([
+                    'index' => static::getIndexName(),
+                    'id' => $item->id,
+                ]);
+            } catch (\Exception $e) {}
+        });
+
+        static::created(function($item) {
+            if ($item->should_index) {
+                $client = resolve(ElasticClient::class);
+                $client->indexDocument([
+                    'index' => static::getIndexName(),
+                    'id' => $item->id,
+                    'body' => static::find($item->id)->toArray(),
+                ]);
+            }
         });
 
         static::updated(function($item) {
             $client = resolve(ElasticClient::class);
-            $client->updateDocument([
-                'index' => static::getIndexName(),
-                'id' => $item->id,
-                'body' => [
-                    'doc' => static::find($item->id)->toArray(),
-                ],
-            ]);
+            if ($item->should_index) {
+                try {
+                    $client->updateDocument([
+                        'index' => static::getIndexName(),
+                        'id' => $item->id,
+                        'body' => [
+                            'doc' => static::find($item->id)->toArray(),
+                        ],
+                    ]);
+                } catch (\Exception $e) {
+                    $client->indexDocument([
+                        'index' => static::getIndexName(),
+                        'id' => $item->id,
+                        'body' => static::find($item->id)->toArray(),
+                    ]);                    
+                }
+            } else {
+                try {
+                    $client->dropDocument([
+                        'index' => static::getIndexName(),
+                        'id' => $item->id,
+                    ]);
+                } catch (\Exception $e) {}
+            }
         });
     }
+
 
     public static function search(string $q = null) : Builder
     {
@@ -65,6 +96,11 @@ class ElasticModel extends Model
                 'mappings' => static::$mappings,
             ],
         ];
+    }
+
+    public function getShouldIndexAttribute() : bool
+    {
+        return true;
     }
 
 }
