@@ -13,6 +13,9 @@ class ElasticModel extends Model
     {
         parent::boot();
 
+        if (config('app.env') != 'production') {
+            return;
+        }
         static::deleting(function($item) {
             $client = resolve(ElasticClient::class);
             try {
@@ -29,12 +32,13 @@ class ElasticModel extends Model
                 $client->indexDocument([
                     'index' => static::getIndexName(),
                     'id' => $item->id,
-                    'body' => static::find($item->id)->toArray(),
+                    'body' => static::find($item->id)->prepareToMigrate(),
                 ]);
             }
         });
 
         static::updated(function($item) {
+            $item->prepareToMigrate();
             $client = resolve(ElasticClient::class);
             if ($item->should_index) {
                 try {
@@ -42,15 +46,15 @@ class ElasticModel extends Model
                         'index' => static::getIndexName(),
                         'id' => $item->id,
                         'body' => [
-                            'doc' => static::find($item->id)->toArray(),
+                            'doc' => static::find($item->id)->prepareToMigrate(),
                         ],
                     ]);
                 } catch (\Exception $e) {
                     $client->indexDocument([
                         'index' => static::getIndexName(),
                         'id' => $item->id,
-                        'body' => static::find($item->id)->toArray(),
-                    ]);                    
+                        'body' => static::find($item->id)->prepareToMigrate(),
+                    ]);
                 }
             } else {
                 try {
@@ -71,7 +75,7 @@ class ElasticModel extends Model
 
     public static function getIndexName() : string
     {
-        return strtolower(class_basename(static::class))."_index";
+        return strtolower(config('app.name').'_'.class_basename(static::class))."_index";
     }
 
     public static $settings = [
@@ -98,9 +102,22 @@ class ElasticModel extends Model
         ];
     }
 
+    public function prepareToMigrate() : array
+    {
+        return $this->toArray();
+    }
+
+    public function prepareToResponse(array $data)
+    {
+        foreach($data as $key => $value) {
+            $this->$key = $value;
+        }
+    }
+
     public function getShouldIndexAttribute() : bool
     {
         return true;
     }
+
 
 }

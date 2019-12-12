@@ -32,9 +32,7 @@ class Builder
         return array_map(
             function($item) {
                 $model = new $this->model;
-                foreach($item['_source'] ?? [] as $key => $value) {
-                    $model->$key = $value;
-                }
+                $model->prepareToResponse($item['_source'] ?? []);
                 // $model->fill($item['_source'] ?? []);
                 return $model;
             }, $response['hits']['hits']
