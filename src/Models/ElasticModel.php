@@ -13,7 +13,7 @@ class ElasticModel extends Model
     {
         parent::boot();
 
-        if (config('app.env') != 'production') {
+        if (!config('brandstudio.elasticsearch.enabled')) {
             return;
         }
         static::deleting(function($item) {
