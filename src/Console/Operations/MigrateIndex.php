@@ -13,16 +13,18 @@ class MigrateIndex extends Base
 
         $params = ['body' => []];
 
-        $items = $model::all()->toArray();
+        $items = $model::all();
 
-        foreach($items as $index => $item) {
-            $params['body'][] = [
-                'index' => [
-                    '_index' => $index_name,
-                    '_id' => $item['id'],
-                ]
-            ];
-            $params['body'][] = $item;
+        foreach($items as $item) {
+            if ($item->should_index) {
+                $params['body'][] = [
+                    'index' => [
+                        '_index' => $index_name,
+                        '_id' => $item->id,
+                    ]
+                ];
+                $params['body'][] = $item->prepareToMigrate();
+            }
         }
 
         $client = resolve(ElasticClient::class);
