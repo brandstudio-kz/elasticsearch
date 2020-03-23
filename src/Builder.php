@@ -19,17 +19,14 @@ class Builder
         $this->model = $model;
         $this->client = resolve(ElasticClient::class);
 
+        $params = config('brandstudio.elasticsearch.search_params');
+        $params['query'] = $q;
+
         $this->query = [
             'index' => $this->model::getIndexName(),
             'body' => [
                 'query' => [
-                    'query_string' => [
-                        'query' => $q,
-                        'fuzziness' => '6',
-                        'fuzzy_max_expansions' => 100,
-                        'fuzzy_prefix_length' => 10,
-                        'minimum_should_match' => '0'
-                    ]
+                    'query_string' => $params
                 ],
             ],
         ];
