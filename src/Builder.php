@@ -59,11 +59,17 @@ class Builder
 
     public function paginate($per_page = 10)
     {
+        $current_page = request()->page ?? 1;
+
         $this->query['size'] = $per_page;
-        $this->query['from'] = $per_page * ((request()->page ?? 1) - 1);
+        $this->query['from'] = $per_page * ($current_page-1);
+
         $data = $this->get(true);
+
+        $data['current_page'] = $current_page;
         $data['per_page'] = $per_page;
         $data['last_page'] = ceil($data['total']/$per_page);
+
         return $data;
     }
 
