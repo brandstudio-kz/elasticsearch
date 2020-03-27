@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use BrandStudio\Elasticsearch\Builder;
 use BrandStudio\Elasticsearch\ElasticClient;
 
-class ElasticModel extends Model
+abstract class ElasticModel extends Model
 {
 
     public static function boot()
@@ -119,5 +119,6 @@ class ElasticModel extends Model
         return true;
     }
 
+    public abstract static function getSearchQuery(string $q) : array;
 
 }
