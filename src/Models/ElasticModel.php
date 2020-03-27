@@ -107,11 +107,9 @@ abstract class ElasticModel extends Model
         return $this->toArray();
     }
 
-    public function prepareToResponse(array $data)
+    public static function prepareToResponse($id)
     {
-        foreach($data as $key => $value) {
-            $this->$key = $value;
-        }
+        return static::findOrFail($id)->toArray();
     }
 
     public function getShouldIndexAttribute() : bool
