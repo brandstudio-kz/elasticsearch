@@ -14,27 +14,21 @@ class Builder
     protected $filter = [];
     protected $query = [];
 
-    public function __construct(string $model, string $q = null)
+    public function __construct(string $model, string $q = '')
     {
         $this->model = $model;
         $this->client = resolve(ElasticClient::class);
 
-        $params = config('brandstudio.elasticsearch.search_params');
-        $params['query'] = $q;
-
         $this->query = [
             'index' => $this->model::getIndexName(),
-            'body' => [
-                'query' => [
-                    'query_string' => $params
-                ],
-            ],
+            'body' => $this->model::getSearchQuery($q)
         ];
     }
 
     public function get($is_paginate = false)
     {
         $response = $this->client->search($this->query);
+
         $data = array_map(
             function($item) {
                 $model = new $this->model;
