@@ -31,10 +31,7 @@ class Builder
 
         $data = array_map(
             function($item) {
-                $model = new $this->model;
-                $model->prepareToResponse($item['_source'] ?? []);
-                // $model->fill($item['_source'] ?? []);
-                return $model;
+                return $this->model::prepareToResponse($item['_id']);
             }, $response['hits']['hits']
         );
 
