@@ -32,13 +32,12 @@ abstract class ElasticModel extends Model
                 $client->indexDocument([
                     'index' => static::getIndexName(),
                     'id' => $item->id,
-                    'body' => static::find($item->id)->prepareToMigrate(),
+                    'body' => $item->prepareToMigrate(),
                 ]);
             }
         });
 
         static::updated(function($item) {
-            $item->prepareToMigrate();
             $client = resolve(ElasticClient::class);
             if ($item->should_index) {
                 try {
@@ -46,14 +45,14 @@ abstract class ElasticModel extends Model
                         'index' => static::getIndexName(),
                         'id' => $item->id,
                         'body' => [
-                            'doc' => static::find($item->id)->prepareToMigrate(),
+                            'doc' => $item->prepareToMigrate(),
                         ],
                     ]);
                 } catch (\Exception $e) {
                     $client->indexDocument([
                         'index' => static::getIndexName(),
                         'id' => $item->id,
-                        'body' => static::find($item->id)->prepareToMigrate(),
+                        'body' => $item->prepareToMigrate(),
                     ]);
                 }
             } else {
