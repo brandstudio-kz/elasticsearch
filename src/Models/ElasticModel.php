@@ -44,9 +44,7 @@ abstract class ElasticModel extends Model
                     $client->updateDocument([
                         'index' => static::getIndexName(),
                         'id' => $item->id,
-                        'body' => [
-                            'doc' => $item->prepareToMigrate(),
-                        ],
+                        'body' => $item->prepareToMigrate(),
                     ]);
                 } catch (\Exception $e) {
                     $client->indexDocument([
