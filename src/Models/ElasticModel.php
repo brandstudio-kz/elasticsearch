@@ -65,9 +65,9 @@ abstract class ElasticModel extends Model
     }
 
 
-    public static function search(string $q = null) : Builder
+    public static function search(string $q = null, $query = null)
     {
-        return new Builder(static::class, $q);
+        return (new Builder(static::class, $q, $query))->query();
     }
 
     public static function getIndexName() : string
@@ -104,9 +104,9 @@ abstract class ElasticModel extends Model
         return $this->toArray();
     }
 
-    public static function prepareToResponse($id)
+    public function prepareToResponse() : array
     {
-        return static::findOrFail($id)->toArray();
+        return $this->toArray();
     }
 
     public function getShouldIndexAttribute() : bool
