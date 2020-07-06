@@ -70,7 +70,7 @@ abstract class ElasticModel extends Model
         return (new Builder(static::class, $q, $query))->query();
     }
 
-    public static function getIndexName() : string
+    public static function getIndexName()
     {
         return strtolower(config('app.name').'_'.class_basename(static::class))."_index";
     }
