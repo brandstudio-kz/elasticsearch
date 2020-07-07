@@ -65,9 +65,9 @@ abstract class ElasticModel extends Model
     }
 
 
-    public static function search(string $q = null, $query = null)
+    public static function search(string $q = '', $size = 100)
     {
-        return (new Builder(static::class, $q, $query))->query();
+        return new Builder(static::class, $q, $size);
     }
 
     public static function getIndexName()
@@ -100,11 +100,6 @@ abstract class ElasticModel extends Model
     }
 
     public function prepareToMigrate() : array
-    {
-        return $this->toArray();
-    }
-
-    public function prepareToResponse() : array
     {
         return $this->toArray();
     }

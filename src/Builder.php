@@ -9,34 +9,52 @@ class Builder
     protected $model;
 
     protected $query = [];
-    protected $model_query;
+    protected $q;
 
-    public function __construct(string $model, string $q = '', $model_query = null)
+    public function __construct(string $model, string $q = '', Int $size)
     {
         $this->client = resolve(ElasticClient::class);
 
         $this->model = $model;
+        $this->q = $q;
 
         $this->query = [
             '_source' => ['id'],
             'index' => $this->model::getIndexName(),
-            'body' => $this->model::getSearchQuery($q)
+            'body' => [
+                'query' => $this->model::getSearchQuery($q),
+            ],
+            'size' => $size,
         ];
-
-        $this->model_query = $model_query ?? $this->model::query();
     }
 
-    public function query()
+    protected function search()
     {
         $response = $this->client->search($this->query);
 
-        $ids = array_map(
+        return array_map(
             function($item) {
-                return $item['_id'];
+                return [
+                    'id' => $item['_id'],
+                    'score' => $item['_score']
+                ];
             }, $response['hits']['hits']
         );
+    }
 
-        return $this->model_query->whereIn('id', $ids);
+    public function get($query = null)
+    {
+        $hits = \Cache::remember($this->model::getIndexName()."_{$this->q}", config('brandstudio.elasticsearch.cache_lifetime'), function() {
+            return $this->search();
+        });
+
+        if (!$query) {
+            return $hits;
+        }
+
+        $ids = array_column($hits, 'id');
+
+        return $query->whereIn('id', $ids)->orderByRaw(\DB::raw("FIELD(id, ".implode(',', $ids).")"));
     }
 
 }
