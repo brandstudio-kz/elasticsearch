@@ -27,8 +27,10 @@ class MigrateIndex extends Base
             }
         }
 
-        $client = resolve(ElasticClient::class);
-        $client->index($params);
+        if (count($params['body'])) {
+            $client = resolve(ElasticClient::class);
+            $client->index($params);            
+        }
 
         echo "Index {$index_name} migrated successfully\n";
     }
