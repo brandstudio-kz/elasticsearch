@@ -54,7 +54,11 @@ class Builder
 
         $ids = array_column($hits, 'id');
 
-        return $query->whereIn('id', $ids)->orderByRaw(\DB::raw("FIELD(id, ".implode(',', $ids).")"));
+        $query->whereIn('id', $ids);
+        if($ids) {
+            $query->orderByRaw(\DB::raw("FIELD(id, ".implode(',', $ids).")"));
+        }
+        return $query;
     }
 
 }
